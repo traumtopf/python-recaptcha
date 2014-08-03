@@ -15,8 +15,7 @@
 ################################################################################
 
 from json import loads as json_decode
-from urlparse import parse_qs
-from urlparse import urlparse
+from six.moves.urllib.parse import parse_qs, urlparse
 
 from nose.tools import assert_false
 from nose.tools import assert_in
@@ -269,48 +268,6 @@ class TestSolutionVerification(object):
             _RANDOM_REMOTE_IP,
             )
         assert_false(is_solution_correct)
-
-
-class TestSolutionEncoding(object):
-    
-    def setup(self):
-        self.client = _SolutionCapturingClient()
-    
-    def test_utf8_input(self):
-        solution_utf8 = u'profesión'.encode('utf8')
-        
-        self.client.is_solution_correct(
-            solution_utf8,
-            _FAKE_CHALLENGE_ID,
-            _RANDOM_REMOTE_IP,
-            )
-        
-        solution_bytestring = solution_utf8.decode('utf8')
-        eq_(solution_bytestring, self.client.solution_text_decoded)
-    
-    def test_ascii_input(self):
-        solution_ascii = 'profession'
-        
-        self.client.is_solution_correct(
-            solution_ascii,
-            _FAKE_CHALLENGE_ID,
-            _RANDOM_REMOTE_IP,
-            )
-        
-        eq_(solution_ascii, self.client.solution_text_decoded)
-    
-    def test_input_in_unsupported_encoding(self):
-        solution_utf8 = u'profesión'.encode('utf8')
-        solution_bytestring = solution_utf8.decode('utf8')
-        solution_latin1 = solution_bytestring.encode('latin1')
-        
-        with assert_raises(UnicodeDecodeError):
-            self.client.is_solution_correct(
-                solution_latin1,
-                _FAKE_CHALLENGE_ID,
-                _RANDOM_REMOTE_IP,
-                )
-
 
 #{ Stubs
 

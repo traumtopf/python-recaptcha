@@ -15,14 +15,10 @@
 """reCAPTCHA client."""
 
 from json import dumps as json_encode
-from urllib import urlencode
-from urllib2 import Request
-from urllib2 import URLError
-from urllib2 import urlopen
-from urlparse import urljoin
-from urlparse import urlsplit
-from urlparse import urlunsplit
 
+from six.moves.urllib.parse import urlencode, urljoin, urlsplit, urlunsplit
+from six.moves.urllib.request import Request, urlopen
+from six.moves.urllib.error import URLError
 
 __all__ = [
     'RECAPTCHA_CHARACTER_ENCODING',
@@ -172,20 +168,16 @@ class RecaptchaClient(object):
         :raises RecaptchaUnreachableError: If it couldn't communicate with the
             reCAPTCHA API or the connection timed out
         
-        ``solution_text`` must be a string encoded in
-        :const:`RECAPTCHA_CHARACTER_ENCODING`.
-        
+
         This method communicates with the remote reCAPTCHA API and uses the
         ``verification_timeout`` set in the constructor.
         
         """
         if not solution_text or not challenge_id:
             return False
-        
-        solution_text_decoded = \
-            solution_text.decode(RECAPTCHA_CHARACTER_ENCODING)
+
         verification_result = self._get_recaptcha_response_for_solution(
-            solution_text_decoded,
+            solution_text,
             challenge_id,
             remote_ip,
             )
@@ -256,7 +248,7 @@ class RecaptchaClient(object):
             urlopen_kwargs['timeout'] = self.verification_timeout
         try:
             response = urlopen(request, **urlopen_kwargs)
-        except URLError, exc:
+        except URLError as exc:
             raise RecaptchaUnreachableError(exc)
         else:
             response_lines = response.read().splitlines()
