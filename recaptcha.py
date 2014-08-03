@@ -16,6 +16,7 @@
 
 from json import dumps as json_encode
 
+import six
 from six.moves.urllib.parse import urlencode, urljoin, urlsplit, urlunsplit
 from six.moves.urllib.request import Request, urlopen
 from six.moves.urllib.error import URLError
@@ -176,8 +177,10 @@ class RecaptchaClient(object):
         if not solution_text or not challenge_id:
             return False
 
+        solution_text_unicode = six.u(solution_text)
+
         verification_result = self._get_recaptcha_response_for_solution(
-            solution_text,
+            solution_text_unicode,
             challenge_id,
             remote_ip,
             )
