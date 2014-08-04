@@ -49,6 +49,6 @@ setup(
     py_modules=['recaptcha'],
     zip_safe=False,
     install_requires=["six"],
-    tests_require=['coverage', 'nose'],
+    tests_require=['coverage', 'nose', 'mock'],
     test_suite='nose.collector',
     )
