@@ -39,20 +39,6 @@ _RECAPTCHA_JAVASCRIPT_CHALLENGE_RELATIVE_URL_PATH = 'challenge'
 _RECAPTCHA_NOSCRIPT_CHALLENGE_RELATIVE_URL_PATH = 'noscript'
 
 
-RECAPTCHA_CHARACTER_ENCODING = 'UTF-8'
-"""
-The character encoding to be used when making requests to the remote API.
-
-**Keep in mind that an ASCII string is also a valid UTF-8 string.** So
-applications which use ASCII exclusively don't need to encode their strings to
-use this library.
-
-This is not officially documented but can be inferred from the encoding used in
-the noscript challenge.
-
-"""
-
-
 _RECAPTCHA_CHALLENGE_MARKUP_TEMPLATE = """
 <script type="text/javascript">
     var RecaptchaOptions = {recaptcha_options_json};
@@ -242,7 +228,7 @@ class RecaptchaClient(object):
             })
         request = Request(
             url=verification_url,
-            data=request_data,
+            data=six.b(request_data),
             headers={'User-agent': _CLIENT_USER_AGENT},
             )
         
