@@ -22,15 +22,6 @@ from mock import patch
 
 import unittest
 
-from nose.tools import assert_false
-from nose.tools import assert_in
-from nose.tools import assert_not_equal
-from nose.tools import assert_not_in
-from nose.tools import assert_raises
-from nose.tools import assert_raises_regexp
-from nose.tools import eq_
-from nose.tools import ok_
-
 from recaptcha import _RECAPTCHA_API_URL
 from recaptcha import RecaptchaClient
 from recaptcha import RecaptchaInvalidChallengeError
