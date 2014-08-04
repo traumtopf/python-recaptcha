@@ -228,7 +228,7 @@ class RecaptchaClient(object):
             })
         request = Request(
             url=verification_url,
-            data=six.b(request_data),
+            data=request_data.encode('utf-8'),
             headers={'User-agent': _CLIENT_USER_AGENT},
             )
         
@@ -240,7 +240,7 @@ class RecaptchaClient(object):
         except URLError as exc:
             raise RecaptchaUnreachableError(exc)
         else:
-            response_lines = response.read().splitlines()
+            response_lines = response.read().decode('utf-8').splitlines()
             response.close()
         
         is_solution_correct = response_lines[0] == 'true'

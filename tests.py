@@ -47,7 +47,7 @@ _RANDOM_REMOTE_IP = '192.0.2.0'
 
 class MockResponse(object):
     def __init__(self, resp_data, code=200, msg='OK'):
-        self.resp_data = resp_data
+        self.resp_data = six.b(resp_data)
         self.code = code
         self.msg = msg
         self.headers = {'content-type': 'text/plain; charset=utf-8'}
