@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-################################################################################
+###############################################################################
 #
 # Copyright (c) 2012, 2degrees Limited <2degrees-floss@googlegroups.com>.
 # All Rights Reserved.
@@ -12,15 +12,15 @@
 # NOT LIMITED TO, THE IMPLIED WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST
 # INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-################################################################################
+###############################################################################
+
+import six
+import pep8
+import unittest
 
 from json import loads as json_decode
-import six
 from six.moves.urllib.parse import parse_qs, urlparse
-
 from mock import patch
-
-import unittest
 
 from recaptcha import _RECAPTCHA_API_URL
 from recaptcha import RecaptchaClient
@@ -42,7 +42,7 @@ class MockResponse(object):
         self.code = code
         self.msg = msg
         self.headers = {'content-type': 'text/plain; charset=utf-8'}
- 
+
     def read(self):
         return self.resp_data
 
@@ -51,6 +51,16 @@ class MockResponse(object):
 
     def getcode(self):
         return self.code
+
+
+class TestCodeFormat(unittest.TestCase):
+
+    def test_pep8_conformance(self):
+        """Test that we conform to PEP8."""
+        pep8style = pep8.StyleGuide()
+        result = pep8style.check_files(['recaptcha.py', 'tests.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
 
 class TestSolutionVerification(unittest.TestCase):
@@ -67,7 +77,11 @@ class TestSolutionVerification(unittest.TestCase):
         self.urlopen_mock.return_value = MockResponse(correct_response)
 
         with self.assertRaises(RecaptchaInvalidChallengeError):
-            result = client.is_solution_correct(_FAKE_SOLUTION_TEXT, _FAKE_CHALLENGE_ID, _RANDOM_REMOTE_IP)
+            result = client.is_solution_correct(
+                _FAKE_SOLUTION_TEXT,
+                _FAKE_CHALLENGE_ID,
+                _RANDOM_REMOTE_IP
+            )
 
     def test_invalid_private_key(self):
         client = RecaptchaClient(_FAKE_PRIVATE_KEY, _FAKE_PUBLIC_KEY)
@@ -76,7 +90,11 @@ class TestSolutionVerification(unittest.TestCase):
         self.urlopen_mock.return_value = MockResponse(correct_response)
 
         with self.assertRaises(RecaptchaInvalidPrivateKeyError):
-            result = client.is_solution_correct(_FAKE_SOLUTION_TEXT, _FAKE_CHALLENGE_ID, _RANDOM_REMOTE_IP)
+            result = client.is_solution_correct(
+                _FAKE_SOLUTION_TEXT,
+                _FAKE_CHALLENGE_ID,
+                _RANDOM_REMOTE_IP
+            )
 
     def test_solution_correct(self):
         client = RecaptchaClient(_FAKE_PRIVATE_KEY, _FAKE_PUBLIC_KEY)
@@ -84,7 +102,11 @@ class TestSolutionVerification(unittest.TestCase):
         correct_response = "true"
         self.urlopen_mock.return_value = MockResponse(correct_response)
 
-        result = client.is_solution_correct(_FAKE_SOLUTION_TEXT, _FAKE_CHALLENGE_ID, _RANDOM_REMOTE_IP)
+        result = client.is_solution_correct(
+            _FAKE_SOLUTION_TEXT,
+            _FAKE_CHALLENGE_ID,
+            _RANDOM_REMOTE_IP
+        )
 
         self.assertTrue(result)
 
@@ -94,7 +116,12 @@ class TestSolutionVerification(unittest.TestCase):
         incorrect_response = "false\nincorrect-captcha-sol"
         self.urlopen_mock.return_value = MockResponse(incorrect_response)
 
-        result = client.is_solution_correct(_FAKE_SOLUTION_TEXT, _FAKE_CHALLENGE_ID, _RANDOM_REMOTE_IP)
+        result = client.is_solution_correct(
+            _FAKE_SOLUTION_TEXT,
+            _FAKE_CHALLENGE_ID,
+            _RANDOM_REMOTE_IP
+        )
+
         self.assertFalse(result)
 
     def tearDown(self):
@@ -107,13 +134,18 @@ class TestChallengeURLGeneration(unittest.TestCase):
         urls = client._get_challenge_urls(False, False)
 
         javascript_challenge_url = urls['javascript_challenge_url']
-        javascript_challenge_url_components = urlparse(javascript_challenge_url)
+        javascript_challenge_url_components = \
+            urlparse(javascript_challenge_url)
+
         javascript_challenge_url_query = parse_qs(
             javascript_challenge_url_components.query,
         )
 
         self.assertIn('k', javascript_challenge_url_query)
-        self.assertEqual(client.public_key, javascript_challenge_url_query['k'][0])
+        self.assertEqual(
+            client.public_key,
+            javascript_challenge_url_query['k'][0]
+        )
 
         noscript_challenge_url = urls['noscript_challenge_url']
         noscript_challenge_url_components = urlparse(noscript_challenge_url)
@@ -127,7 +159,10 @@ class TestChallengeURLGeneration(unittest.TestCase):
         urls = client._get_challenge_urls(False, use_ssl=False)
 
         javascript_challenge_url = urls['javascript_challenge_url']
-        self.assertTrue(javascript_challenge_url.startswith(_RECAPTCHA_API_URL))
+
+        self.assertTrue(
+            javascript_challenge_url.startswith(_RECAPTCHA_API_URL)
+        )
 
         noscript_challenge_url = urls['noscript_challenge_url']
         self.assertTrue(noscript_challenge_url.startswith(_RECAPTCHA_API_URL))
@@ -150,13 +185,17 @@ class TestChallengeURLGeneration(unittest.TestCase):
         )
 
         javascript_challenge_url = urls['javascript_challenge_url']
-        javascript_challenge_url_components = urlparse(javascript_challenge_url)
+        javascript_challenge_url_components = \
+            urlparse(javascript_challenge_url)
         javascript_challenge_url_query = parse_qs(
             javascript_challenge_url_components.query,
         )
 
         self.assertIn('error', javascript_challenge_url_query)
-        self.assertEqual('incorrect-captcha-sol', javascript_challenge_url_query['error'][0])
+        self.assertEqual(
+            'incorrect-captcha-sol',
+            javascript_challenge_url_query['error'][0]
+        )
 
         noscript_challenge_url = urls['noscript_challenge_url']
         noscript_challenge_url_components = urlparse(noscript_challenge_url)
@@ -173,7 +212,8 @@ class TestChallengeURLGeneration(unittest.TestCase):
         )
 
         javascript_challenge_url = urls['javascript_challenge_url']
-        javascript_challenge_url_components = urlparse(javascript_challenge_url)
+        javascript_challenge_url_components = \
+            urlparse(javascript_challenge_url)
         javascript_challenge_url_query = parse_qs(
             javascript_challenge_url_components.query,
         )
@@ -195,7 +235,8 @@ class TestChallengeURLGeneration(unittest.TestCase):
         )
 
         javascript_challenge_url = urls['javascript_challenge_url']
-        javascript_challenge_url_components = urlparse(javascript_challenge_url)
+        javascript_challenge_url_components = \
+            urlparse(javascript_challenge_url)
 
         noscript_challenge_url = urls['noscript_challenge_url']
         noscript_challenge_url_components = urlparse(noscript_challenge_url)
