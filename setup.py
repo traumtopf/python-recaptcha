@@ -20,7 +20,7 @@ from setuptools import setup
 
 _branch_path = os.path.abspath(os.path.dirname(__file__))
 _readme = open(os.path.join(_branch_path, 'README.txt')).read()
-_version = "1.0rc1"
+_version = 1.0 #open(os.path.join(_branch_path, 'VERSION.txt')).readline().rstrip()
 
 
 setup(
@@ -35,6 +35,7 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
